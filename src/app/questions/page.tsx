@@ -1,7 +1,13 @@
 "use client";
 
-import Questions from "../../components/questions";
+import Questions, { IQuestion } from "../../components/questions";
 import { redirect, useRouter } from "next/navigation";
+import { validate } from '../lib/helper';
+import axios from 'axios';
+import { access } from "fs";
+import { useState } from "react";
+import { useEffect } from "react";
+import { off } from "process";
 
 type Props = {
   searchParams: {
@@ -13,24 +19,47 @@ type Props = {
 
 const API_URL = process.env.API_URL;
 
-async function getQuestions(limit: string) {
-  const res = await fetch(
-    `${API_URL}/question`
-  );
+const QuestionsPage: React.FC = () => {
+  const router = useRouter();
+  const [questions, setQuestions] = useState<IQuestion[]>([])
+  const [fetchDone, setFetchDone] = useState<boolean>(false);
+  const [isFetchSuccess, setIsFetchSuccess] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const fetchQuestions = async () => {
+    let accessToken = await validate(`${sessionStorage.getItem('accessToken')}`);
+    if(!accessToken) {
+      router.push('/sign-in')
+    }
+    if(accessToken && !fetchDone) {
+      try {
+        setIsFetching(true);
+        // const limit = searchParams.limit;
+        const headers = {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        };
+        const response = await axios.get(`${API_URL}/question`, { /*withCredentials: true,*/ headers })
+        if(response.data) {
+          console.log('kq:', response.data);
+          setIsFetchSuccess(true);
+          setQuestions(response.data);
+        } else {
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
+        }
+      }
+      catch(err:any) {
+        setIsFetchSuccess(false);
+      }
+      finally {
+        setFetchDone(true);
+        setIsFetching(false);
+      }
+    }
   }
 
-  return res.json();
-}
-
-const QuestionsPage = async ({ searchParams }: Props) => {
-  const router = useRouter();
-
-  const limit = searchParams.limit;
-
-  const response = await getQuestions(limit);
+  useEffect(() => {
+    console.log()
+    fetchQuestions();
+  }, []);
 
   const onDoneQuestion = () => {
     router.push('/claim');
@@ -39,8 +68,8 @@ const QuestionsPage = async ({ searchParams }: Props) => {
   return (
     <div>
     <Questions
-      questions={response}
-      limit={parseInt(limit, 10)}
+      questions={questions}
+      // limit={parseInt(limit, 10)}
       onDone={onDoneQuestion} 
     />
     </div>

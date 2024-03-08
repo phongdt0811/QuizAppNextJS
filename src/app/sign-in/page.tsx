@@ -13,6 +13,11 @@ interface IUser {
 const SignInPage : React.FC = () => {
 	const router = useRouter();
 
+	const accessToken = sessionStorage.getItem('accessToken');
+	if(accessToken) { 
+		router.push('/questions');
+	}
+
 	const [user, setUser] = React.useState<IUser>({
 		phone: '',
 		password: '',
@@ -25,10 +30,11 @@ const SignInPage : React.FC = () => {
 	const onLogin = async () => {
 		try {
 			setLoading(true);
-			// const response = await axios.post('/auth', user);
+			console.log(`sign-in ${process.env.API_URL}, ${user}`);
+			const response = await axios.post(`${process.env.API_URL}/auth/sign-in`, user);
 			// bypass true to dev questions
-			const response = { data: null }
 			console.log('Login successful', response.data);
+			sessionStorage.setItem('accessToken', response.data?.accessToken);
 			router.push('/questions');
 		} catch (error: any) {
 			console.log('Login failed', error.message);
@@ -67,8 +73,9 @@ const SignInPage : React.FC = () => {
 
 			<button
 				onClick={onLogin}
+				disabled={buttonDisabled}
 				className="p-5 border border-blue-300 rounded-lg focus:outline-none focus:border-gray-600 uppercase px-40 py-3 mt-10 font-bold">
-				{ buttonDisabled? "Login" : "Loading..." }
+				Login
 			</button>
 
 			<Link href="/sign-up">

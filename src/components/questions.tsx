@@ -20,13 +20,13 @@ export interface IQuestion {
 
 type Props = {
   questions: IQuestion[];
-  limit: number;
+  limit?: number;
   onDone: Function;
 };
 
 const Questions = ({ questions, limit, onDone }: Props) => {
   const [cursor, setCursor] = useState<number>(0);
-  const [options, setOptions] = useState<string[]>(questions[cursor].options || [])
+  const [options, setOptions] = useState<string[]>(questions[cursor]?.options || [])
   const [selected, setSelected] = useState<number[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
@@ -79,8 +79,8 @@ const Questions = ({ questions, limit, onDone }: Props) => {
   }
 
   useEffect(() => {
-    console.log('load options:', cursor, questions[cursor].options);
-    setOptions(questions[cursor].options);
+    console.log('load options:', cursor, questions[cursor]?.options);
+    setOptions(questions[cursor]?.options);
   }, [cursor, questions]);
 
   return (
