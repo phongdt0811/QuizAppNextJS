@@ -26,7 +26,10 @@ const QuestionsPage: React.FC = () => {
   const [isFetchSuccess, setIsFetchSuccess] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const fetchQuestions = async () => {
-    let accessToken = await validate(`${sessionStorage.getItem('accessToken')}`);
+    let accessToken:string|null = null;
+    if (typeof window !== 'undefined') 	{	
+      accessToken = await validate(`${sessionStorage?.getItem('accessToken')}`);
+    }
     if(!accessToken) {
       router.push('/sign-in')
     }
@@ -35,7 +38,7 @@ const QuestionsPage: React.FC = () => {
         setIsFetching(true);
         // const limit = searchParams.limit;
         const headers = {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${accessToken}`,
         };
         const response = await axios.get(`${API_URL}/question`, { /*withCredentials: true,*/ headers })
         if(response.data) {
@@ -67,7 +70,7 @@ const QuestionsPage: React.FC = () => {
   const handleQuit = () => {
     const res = window.confirm("Are you sure to quit?");
     if(res) {
-      sessionStorage.clear()
+      sessionStorage?.clear()
       router.push('/');
     }
   }

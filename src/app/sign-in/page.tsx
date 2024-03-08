@@ -12,8 +12,10 @@ interface IUser {
 
 const SignInPage : React.FC = () => {
 	const router = useRouter();
-
-	const accessToken = sessionStorage.getItem('accessToken');
+	let accessToken:string|null = null;
+	if (typeof window !== 'undefined') 	{	
+		accessToken = sessionStorage?.getItem('accessToken');
+	}
 	if(accessToken) { 
 		router.push('/questions');
 	}
@@ -34,7 +36,9 @@ const SignInPage : React.FC = () => {
 			const response = await axios.post(`${process.env.API_URL}/auth/sign-in`, user);
 			// bypass true to dev questions
 			console.log('Login successful', response.data);
-			sessionStorage.setItem('accessToken', response.data?.accessToken);
+			if (typeof window !== 'undefined') 	{	
+				sessionStorage?.setItem('accessToken', response.data?.accessToken);
+			}
 			router.push('/questions');
 		} catch (error: any) {
 			console.log('Login failed', error.message);
