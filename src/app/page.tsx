@@ -11,7 +11,7 @@ const Home: React.FC = () => {
 			<h3 className="my-10 text-2xl font-bold"></h3>
 
 			<Link href="/sign-in">
-				<button className="bg-green-600 px-20 py-5 rounded-full font-bold text-2xl cursor-pointer hover:opacity-80">
+				<button className="bg-blue-600 px-20 py-5 rounded-full font-bold text-2xl cursor-pointer hover:opacity-80 text-white">
 					Start Quiz
 				</button>
 			</Link>

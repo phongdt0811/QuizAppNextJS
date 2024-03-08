@@ -25,9 +25,11 @@ const SignInPage : React.FC = () => {
 	const onLogin = async () => {
 		try {
 			setLoading(true);
-			const response = await axios.post('/auth', user);
+			// const response = await axios.post('/auth', user);
+			// bypass true to dev questions
+			const response = { data: null }
 			console.log('Login successful', response.data);
-			router.push('/quiz');
+			router.push('/questions');
 		} catch (error: any) {
 			console.log('Login failed', error.message);
 		} finally {
