@@ -11,9 +11,11 @@ type Props = {
   };
 };
 
+const API_URL = process.env.API_URL;
+
 async function getQuestions(limit: string) {
   const res = await fetch(
-    `http://127.0.0.1:3005/question`
+    `${API_URL}/question`
   );
 
   if (!res.ok) {
