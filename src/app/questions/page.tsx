@@ -16,7 +16,6 @@ async function getQuestions(limit: string) {
     `http://127.0.0.1:3005/question`
   );
 
-  console.log("data: ", res);
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -31,11 +30,16 @@ const QuestionsPage = async ({ searchParams }: Props) => {
 
   const response = await getQuestions(limit);
 
+  const onDoneQuestion = () => {
+    router.push('/claim');
+  }
+ 
   return (
     <div>
     <Questions
       questions={response}
       limit={parseInt(limit, 10)}
+      onDone={onDoneQuestion} 
     />
     </div>
   );

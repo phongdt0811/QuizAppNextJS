@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 const Home: React.FC = () => {
+  
   return (
     <main className="wrapper">
       <div className="h-screen flex flex-col justify-center items-center">
