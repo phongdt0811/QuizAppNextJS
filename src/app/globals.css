@@ -41,16 +41,16 @@ body {
   @apply text-2xl lg:text-4xl font-extrabold tracking-wide text-center py-2;
 }
 
-.option.true {
+.option.choosed.success {
   @apply border border-green-600
 }
 
-.option.false {
+.option.choosed.failure {
   @apply border border-red-600
 }
 
 .option.choosed {
-  @apply text-white bg-red-500;
+  @apply border border-blue-600;
 }
 
 .option {

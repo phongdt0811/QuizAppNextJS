@@ -64,6 +64,13 @@ const QuestionsPage: React.FC = () => {
   const onDoneQuestion = () => {
     router.push('/claim');
   }
+  const handleQuit = () => {
+    const res = window.confirm("Are you sure to quit?");
+    if(res) {
+      sessionStorage.clear()
+      router.push('/');
+    }
+  }
  
   return (
     <div>
@@ -71,6 +78,7 @@ const QuestionsPage: React.FC = () => {
       questions={questions}
       // limit={parseInt(limit, 10)}
       onDone={onDoneQuestion} 
+      handleQuit={handleQuit}
     />
     </div>
   );

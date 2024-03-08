@@ -22,13 +22,15 @@ type Props = {
   questions: IQuestion[];
   limit?: number;
   onDone: Function;
+  handleQuit: Function
 };
 
-const Questions = ({ questions, limit, onDone }: Props) => {
+const Questions = ({ questions, limit, onDone, handleQuit }: Props) => {
   const [cursor, setCursor] = useState<number>(0);
   const [options, setOptions] = useState<string[]>(questions[cursor]?.options || [])
   const [selected, setSelected] = useState<number[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [hintShow, setHintShow] = useState<boolean>(false);
 
   const isLastQuestion = () => {
     return !(questions.length > cursor + 1);
@@ -73,6 +75,7 @@ const Questions = ({ questions, limit, onDone }: Props) => {
   const resetAnswer = () => {
     setIsSubmitted(false);
     setSelected([]);
+    setHintShow(false);
   }
   const doneQuestion = () => {
     onDone();
@@ -86,8 +89,18 @@ const Questions = ({ questions, limit, onDone }: Props) => {
   return (
     <div className="wrapper">
       <div className="bg-white p-4 shadow-md w-full md:w-[80%] lg:w-[70%] max-w-5xl rounded-md">
+        <button onClick={()=>{handleQuit()}}> {"<"} </button>
         <h1 className="heading">Quizy</h1>
         <div className="flex flex-col min-h-[70vh] p-10 gap-4 w-full">
+        { !questions.length && (
+          <>
+          <button type="button" className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+            onClick={()=> handleQuit()}
+          >
+            Log Out
+          </button>
+          </>
+          )}
         { questions.length && (
           <>
             <h2 className="text-2xl text-center font-medium">
@@ -101,10 +114,10 @@ const Questions = ({ questions, limit, onDone }: Props) => {
             {  options?.map((option, i) => (
               <button
                 key={i}
-                className={`option ${ isChoosed(i ,selected)? ( isCorrectOne(i)? 'true' : 'false' ) : "" }`}
+                className={`option ${isChoosed(i ,selected)? "choosed":""} ${ isChoosed(i ,selected)? (isCorrectOne(i)? 'success': 'failure'): "" }`}
                 onClick={() => handleCheck(i)}
               >
-                {i}. 
+                {i+1}. 
                 {option}
                 {/* { isChoosed(i ,selected)? ( isCorrect()? '' : (
                   <>
@@ -125,7 +138,7 @@ const Questions = ({ questions, limit, onDone }: Props) => {
               isSubmitted && isCorrect() && !isLastQuestion() &&  (
                 <>
                   <button 
-                  className="w-[350px] bg-green-500 px-20 inline-flex items-center justify-center" 
+                  className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-500 dark:focus:ring-green-800" 
                   onClick={() => {
                     setCursor(cursor+1)
                     resetAnswer()
@@ -140,7 +153,8 @@ const Questions = ({ questions, limit, onDone }: Props) => {
               isSubmitted && isCorrect() && isLastQuestion() &&  (
                 <>
                   <button 
-                  className="w-[350px] bg-green-500 px-20 inline-flex items-center justify-center" 
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" 
+                  
                   onClick={() => {
                     doneQuestion()
                   }}
@@ -154,7 +168,7 @@ const Questions = ({ questions, limit, onDone }: Props) => {
               isSubmitted && !isCorrect() && (
                 <>
                   <button 
-                  className="w-[350px] text-white bg-red-500 gap-4 px-20 inline-flex items-center justify-center" 
+                  className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-500 dark:focus:ring-red-900" 
                   onClick={() => {resetAnswer()}}
                   >
                     Try Again
@@ -166,9 +180,15 @@ const Questions = ({ questions, limit, onDone }: Props) => {
               Quit Quiz
             </Button> */}
         </div>
+        <button 
+          type="button" 
+          className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+          onClick={() => { setHintShow(!hintShow) }}
+          >
+            Hint
+        </button>
         <div className="flex justify-between py-5 px-2 font-bold text-md">
-          
-          { isSubmitted ?? (
+          { hintShow && (
             <>
               {questions[cursor].hint}
             </>
