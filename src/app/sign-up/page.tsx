@@ -8,7 +8,7 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 interface IUser {
     phone: string;
     password: string;
-	fullname: string
+	fullName: string
 }
 
 const SignInPage: React.FC = () => {
@@ -16,28 +16,32 @@ const SignInPage: React.FC = () => {
     const [user, setUser] = useState<IUser>({
         phone: '',
         password: '',
-		fullname: ''
+		fullName: ''
       });
-    
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  	const [status, setStatus] = useState<boolean>(false);
+	const [isDone, setIsDone] = useState<boolean>(false);
+	const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(false);
+  	const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  	const [loading, setLoading] = useState<boolean>(false);
 
   const onSignUp = async () => {
     try {
       setLoading(true);
-
-      const response = await axios.post('/register', user);
-      router.push('/login');
+      const response = await axios.post(`${process.env.API_URL}/auth/sign-up`, user);
+      console.log(response.data);
+	  router.push('/sign-in');
     } catch (error: any) {
       console.log('Failed', error.message);
+	  setErrorMsg(error.message);
     } finally {
       setLoading(false);
+	  setIsDone(true);
     }
   };
 
   useEffect(() => {
-    setButtonDisabled(!(user.phone && user.password));
+    setButtonDisabled(!(user.phone && user.password&&user.fullName));
   }, [user]);
 
   return (
@@ -50,8 +54,8 @@ const SignInPage: React.FC = () => {
 			className="w-[370px] text-slate-800 p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
 			id="fullname"
 			type="text"
-			value={user.fullname}
-			onChange={(e) => setUser({ ...user, fullname: e.target.value })}
+			value={user.fullName}
+			onChange={(e) => setUser({ ...user, fullName: e.target.value })}
 			placeholder="Full name"
 		/>
 
@@ -72,11 +76,25 @@ const SignInPage: React.FC = () => {
 			onChange={(e) => setUser({ ...user, password: e.target.value })}
 			placeholder="Password"
 		/>
-
+		{
+			isDone && status && (
+				<>
+					<div className='text-green-600'> Successfuly </div>
+				</>
+			)
+		}
+		{
+			isDone && !status && (
+				<>
+					<div className='text-red-600'> Error: { errorMsg } </div>
+				</>
+			)
+		}
 		<button
 			onClick={onSignUp}
+			disabled={buttonDisabled}
 			className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-600 uppercase px-40 py-3 mt-10 font-bold">
-			{buttonDisabled ? 'Sign Up' : ''}
+			{ 'Sign Up' }
 		</button>
 
 		<Link href="/sign-in">
